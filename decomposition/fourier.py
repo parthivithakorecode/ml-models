@@ -1,19 +1,24 @@
 import numpy as np
-
+import math
 class FourierTransform:
-    """
-    Applies Discrete Fourier Transform (DFT) to input signals.
-    Works on each sample independently.
-    """
-
+    def __init__(self):
+        pass
+    def _DFT(self, x):
+        N = len(x)
+        X = np.zeros(N, dtype=complex)
+        for k in range(N):
+            summation = 0
+            for n in range(N):
+                angle = -2j * np.pi * k * n / N
+                summation += x[n] * np.exp(angle)
+            X[k] = summation / math.sqrt(N)
+        return X
     def transform(self, X):
-        """
-        Parameters:
-            X : numpy array of shape (n_samples, n_features)
-
-        Returns:
-            X_ft : numpy array (complex), Fourier transformed data
-        """
-        # Apply FFT along feature axis
-        X_ft = np.fft.fft(X, axis=1)
-        return X_ft
+        X = np.asarray(X)
+        if X.ndim == 1:
+            X = X.reshape(1, -1)
+        spectra = []
+        for row in X:
+            spectrum = self._DFT(row)
+            spectra.append(spectrum)
+        return np.array(spectra)
